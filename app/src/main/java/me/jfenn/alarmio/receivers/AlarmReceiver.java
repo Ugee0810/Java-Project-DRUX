@@ -28,9 +28,5 @@ public class AlarmReceiver extends BroadcastReceiver {
         ringer.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ringer.putExtra(AlarmActivity.EXTRA_ALARM, alarm);
         context.startActivity(ringer);
-
-        try {
-            ((MainActivity)MainActivity.mContext).mOutputStream.write('A');
-        }
     }
 }

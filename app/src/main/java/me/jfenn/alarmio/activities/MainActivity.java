@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.AlarmClock;
 import android.provider.Settings;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.afollestad.aesthetic.AestheticActivity;

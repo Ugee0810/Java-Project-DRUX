@@ -82,6 +82,7 @@ task printVersionName {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
 
     // debugging tools
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
@@ -94,7 +95,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha01'
 
     // media dependencies
     implementation 'com.google.android.exoplayer:exoplayer-core:2.11.3'

@@ -41,9 +41,7 @@ import me.jfenn.alarmio.interfaces.ContextFragmentInstantiator;
 public class SettingsFragment extends BasePagerFragment implements Consumer {
 
     private RecyclerView recyclerView;
-
     private PreferenceAdapter preferenceAdapter;
-
     private Disposable colorPrimarySubscription;
     private Disposable textColorPrimarySubscription;
 

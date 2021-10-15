@@ -155,11 +155,6 @@ public class PageIndicatorView extends View implements ViewPager.OnPageChangeLis
     public void onPageScrollStateChanged(int state) {
     }
 
-    /**
-     * You must call this AFTER setting the Adapter for the ViewPager, or it won't display the right amount of points.
-     *
-     * @param viewPager
-     */
     public void setViewPager(ViewPager viewPager) {
         this.viewPager = viewPager;
         viewPager.addOnPageChangeListener(this);

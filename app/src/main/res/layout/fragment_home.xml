@@ -111,16 +111,6 @@
                 app:srcCompat="@drawable/ic_alarm_add"
                 app:fab_title="@string/title_set_alarm" />
 
-            <jahirfiquitiva.libs.fabsmenu.TitleFAB
-                android:id="@+id/bluetoothFab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:backgroundTint="?colorAccent"
-                app:fabSize="mini"
-                app:rippleColor="?colorPrimary"
-                app:srcCompat="@drawable/ic_bluetooth"
-                app:fab_title="@string/title_set_bluetooth" />
-
         </jahirfiquitiva.libs.fabsmenu.FABsMenu>
 
     </jahirfiquitiva.libs.fabsmenu.FABsMenuLayout>

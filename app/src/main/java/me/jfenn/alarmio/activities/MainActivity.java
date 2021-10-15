@@ -280,49 +280,6 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-    public void Sunday(View view) { try {
-            mOutputStream.write('A');
-        }
-        catch(Exception e) { }
-    }//Send string "일요일(A)"
-
-    public void Monday(View view) { try {
-            mOutputStream.write('B');
-        }
-        catch(Exception e) { }
-    }//Send string "월요일(B)"
-
-    public void Tuesday(View view) { try {
-            mOutputStream.write('C');
-        }
-        catch(Exception e) { }
-    }//Send string "화요일(C)"
-
-    public void Wednesday(View view) { try {
-            mOutputStream.write('D');
-        }
-        catch(Exception e) { }
-    }//Send string "수요일(D)"
-
-    public void Thursday(View view) { try {
-            mOutputStream.write('E');
-        }
-        catch(Exception e) { }
-    }//Send string "목요일(E)"
-
-    public void friday(View view) { try {
-            mOutputStream.write('F');
-        }
-        catch(Exception e) { }
-    }//Send string "금요일(F)"
-
-    public void Saturday(View view) { try {
-            mOutputStream.write('G');
-        }
-        catch(Exception e) { }
-    }//Send string "토요일(G)"
-
     // 블루투스
 
     @Override

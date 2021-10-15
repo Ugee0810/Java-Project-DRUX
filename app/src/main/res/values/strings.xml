@@ -5,8 +5,6 @@
     <string name="info_background_permissions_body">Newer versions of Android are becoming increasingly unreliable at starting apps from the background without user interaction; with the introduction of Doze/App Standby in Android 6.0, the requirements for an app to be started are ambiguous and often device-specific.\n\nAs such, while it is not always a requirement for this app to function, it is highly recommended that you grant the System Overlays permission on the next page. This will grant Alarmio an exemption from Android\'s usual requirements for starting an app without user interaction, and allow it to function much more reliably.</string>
 
     <string name="title_alarm">Alarm %d</string>
-    <string name="title_bluetooth" translatable="false">Bluetooth</string>
-    <string name="title_set_bluetooth" translatable="false">Bluetooth</string>
     <string name="title_alarm_next">%s from now.</string>
     <string name="title_none">None</string>
     <string name="title_vibrate">Vibrate</string>
@@ -92,6 +90,5 @@
     <string name="day_friday_abbr">금</string>
     <string name="day_saturday_abbr">토</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

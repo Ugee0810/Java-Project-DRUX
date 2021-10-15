@@ -12,16 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-
 import com.afollestad.aesthetic.Aesthetic;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -60,7 +57,6 @@ public class HomeFragment extends BaseFragment {
     private TitleFAB stopwatchFab;
     private TitleFAB timerFab;
     private TitleFAB alarmFab;
-    private TitleFAB bluetoothFab;
 
     private BottomSheetBehavior behavior;
     private boolean shouldCollapseBack;
@@ -85,8 +81,6 @@ public class HomeFragment extends BaseFragment {
         stopwatchFab = view.findViewById(R.id.stopwatchFab);
         timerFab = view.findViewById(R.id.timerFab);
         alarmFab = view.findViewById(R.id.alarmFab);
-        bluetoothFab = view.findViewById(R.id.bluetoothFab);
-
         behavior = BottomSheetBehavior.from(bottomSheet);
         behavior.setHideable(false);
 
@@ -180,12 +174,10 @@ public class HomeFragment extends BaseFragment {
                     stopwatchFab.setColorFilter(color);
                     timerFab.setColorFilter(color);
                     alarmFab.setColorFilter(color);
-                    bluetoothFab.setColorFilter(color);
 
                     stopwatchFab.setBackgroundColor(integer);
                     timerFab.setBackgroundColor(integer);
                     alarmFab.setBackgroundColor(integer);
-                    bluetoothFab.setBackgroundColor(integer);
                 });
 
         textColorPrimarySubscription = Aesthetic.Companion.get()
@@ -194,7 +186,6 @@ public class HomeFragment extends BaseFragment {
                     stopwatchFab.setTitleTextColor(integer);
                     timerFab.setTitleTextColor(integer);
                     alarmFab.setTitleTextColor(integer);
-                    bluetoothFab.setTitleTextColor(integer);
                 });
 
         textColorPrimaryInverseSubscription = Aesthetic.Companion.get()
@@ -203,7 +194,6 @@ public class HomeFragment extends BaseFragment {
                     alarmFab.setTitleBackgroundColor(integer);
                     stopwatchFab.setTitleBackgroundColor(integer);
                     timerFab.setTitleBackgroundColor(integer);
-                    bluetoothFab.setTitleBackgroundColor(integer);
                 });
 
         stopwatchFab.setOnClickListener(view -> {
@@ -222,10 +212,6 @@ public class HomeFragment extends BaseFragment {
 
         alarmFab.setOnClickListener(view -> {
             invokeAlarmScheduler();
-            menu.collapse();
-        });
-
-        bluetoothFab.setOnClickListener(view -> {
             menu.collapse();
         });
 
@@ -252,10 +238,6 @@ public class HomeFragment extends BaseFragment {
         return view;
     }
 
-    /**
-     * Open the alarm scheduler dialog to allow the user to create
-     * a new alarm.
-     */
     private void invokeAlarmScheduler() {
         new AestheticTimeSheetPickerDialog(view.getContext())
                 .setListener(new PickerDialog.OnSelectedListener<LinearTimePickerView>() {
@@ -278,18 +260,11 @@ public class HomeFragment extends BaseFragment {
                 .show();
     }
 
-    /**
-     * Open the timer scheduler dialog to allow the user to start
-     * a timer.
-     */
     private void invokeTimerScheduler() {
         new TimerDialog(getContext(), getFragmentManager())
                 .show();
     }
 
-    /**
-     * Update the time zones displayed in the clock fragments pager.
-     */
     private void setClockFragments() {
         if (timePager != null && timeIndicator != null) {
             List<FragmentInstantiator> fragments = new ArrayList<>();

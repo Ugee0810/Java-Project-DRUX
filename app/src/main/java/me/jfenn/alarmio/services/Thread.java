@@ -13,12 +13,10 @@ public class Thread {
     private final OutputStream mmOutStream;
 
     public Thread(BluetoothSocket socket) {
-
         mmSocket = socket;
 
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
-
         try {
             tmpIn = socket.getInputStream();
             tmpOut = socket.getOutputStream();
@@ -53,7 +51,8 @@ public class Thread {
         try {
             mmOutStream.write(bytes);
         }
-        catch (IOException e) { }
+        catch (IOException e) {
+        }
     }//Call this from the main activity to send data to the remote device
 
     public void cancel() {

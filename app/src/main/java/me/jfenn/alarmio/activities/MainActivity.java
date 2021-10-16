@@ -46,7 +46,7 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
     private Alarmio alarmio;
     private WeakReference<BaseFragment> fragmentRef;
 
-    // 블루투스
+    //블루투스 사용
     public static Context mContext;
     boolean cheak = true;
     public static final int REQUEST_ENABLE_BT = 10;
@@ -67,8 +67,8 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
     Thread mWorkerThread = null;
     byte[] readBuffer;
     int readBufferPosition;
-    EditText mEditReceive, mEditSend;
-    // 블루투스
+    EditText mEditReceive;
+    //블루투스 사용
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,16 +76,6 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         setContentView(R.layout.activity_main);
         alarmio = (Alarmio) getApplicationContext();
         alarmio.setListener(this);
-
-        // 블루투스 사용
-        mContext = this;
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
-            return;
-        }
-        checkBluetooth();
-        // 블루투스 사용
 
         if (savedInstanceState == null) {
             BaseFragment fragment = createFragmentFor(getIntent());
@@ -125,7 +115,130 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
             });
             alert.show();
         }
+
+        // 블루투스 사용
+        mContext = this;
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            return;
+        }
+        checkBluetooth();
+        // 블루투스 사용
     }//onCreate 닫기
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(isActionableIntent(intent)) {
+            FragmentManager manager = getSupportFragmentManager();
+            BaseFragment newFragment = createFragmentFor(intent);
+            BaseFragment fragment = fragmentRef != null ? fragmentRef.get() : null;
+
+            if(newFragment == null || newFragment.equals(fragment)) // check that fragment isn't already displayed
+                return;
+
+            if(newFragment instanceof HomeFragment && manager.getBackStackEntryCount() > 0) // clear the back stack
+                manager.popBackStack(manager.getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+            FragmentTransaction transaction = manager.beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_up_sheet, R.anim.slide_out_up_sheet, R.anim.slide_in_down_sheet, R.anim.slide_out_down_sheet)
+                    .replace(R.id.fragment, newFragment);
+
+            if(fragment instanceof HomeFragment && !(newFragment instanceof HomeFragment))
+                transaction.addToBackStack(null);
+
+            fragmentRef = new WeakReference<>(newFragment);
+            transaction.commit();
+        }
+    }
+
+    @Nullable
+    private BaseFragment createFragmentFor(Intent intent) {
+        BaseFragment fragment = fragmentRef != null ? fragmentRef.get() : null;
+        int fragmentId = intent.getIntExtra(EXTRA_FRAGMENT, -1);
+
+        switch(fragmentId) {
+            case FRAGMENT_STOPWATCH:
+                if(fragment instanceof StopwatchFragment)
+                    return fragment;
+                return new StopwatchFragment();
+
+            case FRAGMENT_TIMER:
+                if(intent.hasExtra(TimerReceiver.EXTRA_TIMER_ID)) {
+                    int id = intent.getIntExtra(TimerReceiver.EXTRA_TIMER_ID, 0);
+                    if(alarmio.getTimers().size() <= id || id < 0) 
+                        return fragment;
+
+                    Bundle args = new Bundle();
+                    args.putParcelable(TimerFragment.EXTRA_TIMER, alarmio.getTimers().get(id));
+
+                    BaseFragment newFragment = new TimerFragment();
+                    newFragment.setArguments(args);
+                    return newFragment;
+                }
+                return fragment;
+                default:
+                    if (Intent.ACTION_MAIN.equals(intent.getAction()) || intent.getAction() == null)
+                        return new SplashFragment();
+                    Bundle args = new Bundle();
+                    args.putString(HomeFragment.INTENT_ACTION, intent.getAction());
+                    BaseFragment newFragment = new HomeFragment();
+                    newFragment.setArguments(args);
+                    return newFragment;
+        }
+    }
+
+    private boolean isActionableIntent(Intent intent) {
+        return intent.hasExtra(EXTRA_FRAGMENT)
+                || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                && (AlarmClock.ACTION_SHOW_ALARMS.equals(intent.getAction())
+                || AlarmClock.ACTION_SET_TIMER.equals(intent.getAction()))
+                || AlarmClock.ACTION_SET_ALARM.equals(intent.getAction())
+                || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && (AlarmClock.ACTION_SHOW_TIMERS.equals(intent.getAction()))));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(alarmio != null)
+            alarmio.setListener(null);
+        alarmio = null;
+        try {
+            mWorkerThread.interrupt();  //데이터 수신 쓰레드 종료
+            mInputStream.close();
+            mSocket.close();
+        } catch(Exception e) {}
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState != null ? outState : new Bundle()); 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        alarmio.stopCurrentSound();
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+        fragmentRef = new WeakReference<>(fragment);
+    }
+
+    @Override
+    public void requestPermissions(String... permissions) {
+        ActivityCompat.requestPermissions(this, permissions, 0);
+    }
+
+    @Override
+    public FragmentManager gettFragmentManager() {
+        return getSupportFragmentManager();
+    }
 
     // 블루투스
     void checkBluetooth() {
@@ -279,117 +392,4 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         super.onActivityResult(requestCode, resultCode, data);
     }
     // 블루투스
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if(isActionableIntent(intent)) {
-            FragmentManager manager = getSupportFragmentManager();
-            BaseFragment newFragment = createFragmentFor(intent);
-            BaseFragment fragment = fragmentRef != null ? fragmentRef.get() : null;
-
-            if(newFragment == null || newFragment.equals(fragment)) // check that fragment isn't already displayed
-                return;
-
-            if(newFragment instanceof HomeFragment && manager.getBackStackEntryCount() > 0) // clear the back stack
-                manager.popBackStack(manager.getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-            FragmentTransaction transaction = manager.beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_up_sheet, R.anim.slide_out_up_sheet, R.anim.slide_in_down_sheet, R.anim.slide_out_down_sheet)
-                    .replace(R.id.fragment, newFragment);
-
-            if(fragment instanceof HomeFragment && !(newFragment instanceof HomeFragment))
-                transaction.addToBackStack(null);
-
-            fragmentRef = new WeakReference<>(newFragment);
-            transaction.commit();
-        }
-    }
-
-    @Nullable
-    private BaseFragment createFragmentFor(Intent intent) {
-        BaseFragment fragment = fragmentRef != null ? fragmentRef.get() : null;
-        int fragmentId = intent.getIntExtra(EXTRA_FRAGMENT, -1);
-
-        switch(fragmentId) {
-            case FRAGMENT_STOPWATCH:
-                if(fragment instanceof StopwatchFragment)
-                    return fragment;
-                return new StopwatchFragment();
-
-            case FRAGMENT_TIMER:
-                if(intent.hasExtra(TimerReceiver.EXTRA_TIMER_ID)) {
-                    int id = intent.getIntExtra(TimerReceiver.EXTRA_TIMER_ID, 0);
-                    if(alarmio.getTimers().size() <= id || id < 0) 
-                        return fragment;
-
-                    Bundle args = new Bundle();
-                    args.putParcelable(TimerFragment.EXTRA_TIMER, alarmio.getTimers().get(id));
-
-                    BaseFragment newFragment = new TimerFragment();
-                    newFragment.setArguments(args);
-                    return newFragment;
-                }
-                return fragment;
-                default:
-                    if (Intent.ACTION_MAIN.equals(intent.getAction()) || intent.getAction() == null)
-                        return new SplashFragment();
-                    Bundle args = new Bundle();
-                    args.putString(HomeFragment.INTENT_ACTION, intent.getAction());
-                    BaseFragment newFragment = new HomeFragment();
-                    newFragment.setArguments(args);
-                    return newFragment;
-        }
-    }
-
-    private boolean isActionableIntent(Intent intent) {
-        return intent.hasExtra(EXTRA_FRAGMENT)
-                || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                && (AlarmClock.ACTION_SHOW_ALARMS.equals(intent.getAction())
-                || AlarmClock.ACTION_SET_TIMER.equals(intent.getAction()))
-                || AlarmClock.ACTION_SET_ALARM.equals(intent.getAction())
-                || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && (AlarmClock.ACTION_SHOW_TIMERS.equals(intent.getAction()))));
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(alarmio != null)
-            alarmio.setListener(null);
-        alarmio = null;
-        try {
-            mWorkerThread.interrupt();  //데이터 수신 쓰레드 종료
-            mInputStream.close();
-            mSocket.close();
-        } catch(Exception e) {}
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState != null ? outState : new Bundle()); 
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        alarmio.stopCurrentSound();
-    }
-
-    @Override
-    public void onBackStackChanged() {
-        BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-        fragmentRef = new WeakReference<>(fragment);
-    }
-
-    @Override
-    public void requestPermissions(String... permissions) {
-        ActivityCompat.requestPermissions(this, permissions, 0);
-    }
-
-    @Override
-    public FragmentManager gettFragmentManager() {
-        return getSupportFragmentManager();
-    }
 }

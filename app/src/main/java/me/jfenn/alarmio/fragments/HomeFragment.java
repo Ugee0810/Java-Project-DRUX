@@ -70,6 +70,7 @@ public class HomeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_home, container, false);
+
         ViewPager viewPager = view.findViewById(R.id.viewPager);
         TabLayout tabLayout = view.findViewById(R.id.tabLayout);
         timePager = view.findViewById(R.id.timePager);
@@ -115,6 +116,7 @@ public class HomeFragment extends BaseFragment {
         SimplePagerAdapter pagerAdapter = new SimplePagerAdapter(
                 getContext(), getChildFragmentManager(),
                 new AlarmsFragment.Instantiator(getContext()),
+                new RealStatusFragment.Instantiator(getContext()),
                 new SettingsFragment.Instantiator(getContext())
         );
 

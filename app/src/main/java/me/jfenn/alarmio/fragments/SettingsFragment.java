@@ -96,11 +96,6 @@ public class SettingsFragment extends BasePagerFragment implements Consumer {
     }
 
     @Override
-    public String getTitle(Context context) {
-        return context.getString(R.string.title_settings);
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (recyclerView != null && preferenceAdapter != null) {
@@ -113,6 +108,11 @@ public class SettingsFragment extends BasePagerFragment implements Consumer {
         if (recyclerView != null && preferenceAdapter != null) {
             recyclerView.post(() -> preferenceAdapter.notifyDataSetChanged());
         }
+    }
+
+    @Override
+    public String getTitle(Context context) {
+        return context.getString(R.string.title_settings);
     }
 
     public static class Instantiator extends ContextFragmentInstantiator {

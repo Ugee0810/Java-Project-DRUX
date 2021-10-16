@@ -58,15 +58,10 @@ public class AlarmsFragment extends BasePagerFragment {
 
     @Override
     public void onDestroyView() {
+        super.onDestroyView();
         colorAccentSubscription.dispose();
         colorForegroundSubscription.dispose();
         textColorPrimarySubscription.dispose();
-        super.onDestroyView();
-    }
-
-    @Override
-    public String getTitle(Context context) {
-        return context.getString(R.string.title_alarms);
     }
 
     @Override
@@ -90,6 +85,11 @@ public class AlarmsFragment extends BasePagerFragment {
     private void onChanged() {
         if (empty != null && alarmsAdapter != null)
             empty.setVisibility(alarmsAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public String getTitle(Context context) {
+        return context.getString(R.string.title_alarms);
     }
 
     public static class Instantiator extends ContextFragmentInstantiator {

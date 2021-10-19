@@ -1,22 +1,20 @@
 package me.jfenn.alarmio.fragments;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.afollestad.aesthetic.Aesthetic;
-
 import org.jetbrains.annotations.NotNull;
-
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import me.jfenn.alarmio.R;
+import me.jfenn.alarmio.activities.MainActivity;
+import me.jfenn.alarmio.data.preference.AlertWindowPreferenceData;
+import me.jfenn.alarmio.data.preference.BatteryOptimizationPreferenceData;
 import me.jfenn.alarmio.interfaces.ContextFragmentInstantiator;
 
 public class RealStatusFragment extends BasePagerFragment {
@@ -40,53 +38,68 @@ public class RealStatusFragment extends BasePagerFragment {
         LED_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try { ((MainActivity)MainActivity.mContext).mOutputStream.write('A'); }
+                catch(Exception e) { }
+                Toast.makeText(((Context) MainActivity.mContext).getApplicationContext(), "1번 슬롯이 열렸습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
         LED_2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try { ((MainActivity)MainActivity.mContext).mOutputStream.write('B'); }
+                catch(Exception e) { }
+                Toast.makeText(((Context) MainActivity.mContext).getApplicationContext(), "2번 슬롯이 열렸습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
         LED_3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try { ((MainActivity)MainActivity.mContext).mOutputStream.write('C'); }
+                catch(Exception e) { }
+                Toast.makeText(((Context) MainActivity.mContext).getApplicationContext(), "3번 슬롯이 열렸습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
         LED_4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try { ((MainActivity)MainActivity.mContext).mOutputStream.write('D'); }
+                catch(Exception e) { }
+                Toast.makeText(((Context) MainActivity.mContext).getApplicationContext(), "4번 슬롯이 열렸습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
         LED_5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try { ((MainActivity)MainActivity.mContext).mOutputStream.write('E'); }
+                catch(Exception e) { }
+                Toast.makeText(((Context) MainActivity.mContext).getApplicationContext(), "5번 슬롯이 열렸습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
         LED_6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try { ((MainActivity)MainActivity.mContext).mOutputStream.write('F'); }
+                catch(Exception e) { }
+                Toast.makeText(((Context) MainActivity.mContext).getApplicationContext(), "6번 슬롯이 열렸습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
         LED_7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try { ((MainActivity)MainActivity.mContext).mOutputStream.write('G'); }
+                catch(Exception e) { }
+                Toast.makeText(((Context) MainActivity.mContext).getApplicationContext(), "7번 슬롯이 열렸습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
         return v;
+
     }//onCreateView 닫기
 
     @Override
@@ -100,16 +113,13 @@ public class RealStatusFragment extends BasePagerFragment {
     }
 
     public static class Instantiator extends ContextFragmentInstantiator {
-
         public Instantiator(Context context) {
             super(context);
         }
-
         @Override
         public String getTitle(Context context, int position) {
             return context.getString(R.string.title_RealStatus);
         }
-
         @Nullable
         @Override
         public BasePagerFragment newInstance(int position) {

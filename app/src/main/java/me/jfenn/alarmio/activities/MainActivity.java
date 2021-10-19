@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.AlarmClock;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.afollestad.aesthetic.AestheticActivity;
@@ -51,20 +52,20 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
     boolean cheak = true;
     public static final int REQUEST_ENABLE_BT = 10;
     int mPairedDeviceCount = 0;
-    Set<BluetoothDevice> mDevices;
+    public Set<BluetoothDevice> mDevices;
     String deviceName = "";
     long now = System.currentTimeMillis();
     Date date = new Date(now);
     SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     String strNow = sdfNow.format(date);
-    BluetoothAdapter mBluetoothAdapter;
-    BluetoothDevice mRemoteDevice;
-    BluetoothSocket mSocket = null;
-    OutputStream mOutputStream = null;
-    InputStream mInputStream = null;
-    String mStrDelimiter = "\n";
+    public BluetoothAdapter mBluetoothAdapter;
+    public BluetoothDevice mRemoteDevice;
+    public BluetoothSocket mSocket = null;
+    public OutputStream mOutputStream = null;
+    public InputStream mInputStream = null;
+    public String mStrDelimiter = "\n";
     char mCharDelimiter = '\n';
-    Thread mWorkerThread = null;
+    public Thread mWorkerThread = null;
     byte[] readBuffer;
     int readBufferPosition;
     EditText mEditReceive;
@@ -258,10 +259,12 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         }
     }
 
-    void beginListenForData() {
+    public void beginListenForData() {
         final Handler handler = new Handler();
-        readBufferPosition = 0;      // 버퍼 내 수신 문자 저장 위치
-        readBuffer = new byte[1024]; // 수신 버퍼
+        // 수신 버퍼
+        readBuffer = new byte[1024];
+        // 버퍼 내 수신 문자 저장 위치
+        readBufferPosition = 0;
         // 문자열 수신 쓰레드
         mWorkerThread = new Thread(new Runnable() {
             @Override
@@ -272,8 +275,10 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
                 while(!Thread.currentThread().isInterrupted()) {
                     try {
                         // InputStream.available() : 다른 스레드에서 blocking 하기 전까지 읽은 수 있는 문자열 개수를 반환
-                        int byteAvailable = mInputStream.available();   // 수신 데이터 확인
-                        if(byteAvailable > 0) {                         // 데이터가 수신된 경우.
+                        // 수신 데이터 확인
+                        int byteAvailable = mInputStream.available();
+                        // 데이터가 수신된 경우
+                        if(byteAvailable > 0) {
                             byte[] packetBytes = new byte[byteAvailable];
                             // read(buf[]) : 입력스트림에서 buf[] 크기만큼 읽어서 저장 없을 경우에 -1 리턴
                             mInputStream.read(packetBytes);
@@ -299,9 +304,9 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
                                 }
                             }
                         }
-                    } catch (Exception e) { // 데이터 수신 중 오류 발생
-                        Toast.makeText(getApplicationContext(), "데이터 수신 중 오류가 발생 했습니다.", Toast.LENGTH_LONG).show();
                     }
+                    // 데이터 수신 중 오류 발생
+                    catch (Exception e) { Toast.makeText(getApplicationContext(), "데이터 수신 중 오류가 발생 했습니다.", Toast.LENGTH_LONG).show(); }
                 }
             }
         });
@@ -322,18 +327,18 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
 
     public void selectDevice() {
         // 블루투스 디바이스는 연결해서 사용하기 전에 먼저 페어링 되어야만 한다
-        // getBondedDevices() : 페어링된 장치 목록 얻어오는 함수.
+        // getBondedDevices() : 페어링된 장치 목록 얻어오는 함수
         mDevices = mBluetoothAdapter.getBondedDevices();
         mPairedDeviceCount = mDevices.size();
 
-        if(mPairedDeviceCount == 0 ) {  // 페어링된 장치가 없는 경우.
+        if(mPairedDeviceCount == 0 ) {  // 페어링된 장치가 없는 경우
             Toast.makeText(getApplicationContext(), "페어링된 장치가 없습니다. 먼저 기기와 페어링을 해주세요.", Toast.LENGTH_LONG).show();
         }
-        // 페어링된 장치가 있는 경우.
+        // 페어링된 장치가 있는 경우
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         builder.setTitle("블루투스 장치 선택");
 
-        // 각 디바이스는 이름과 서로 다른 주소를 가진다. 페어링 된 디바이스들을 표시한다.
+        // 각 디바이스는 이름과 서로 다른 주소를 가진다. 페어링 된 디바이스들을 표시
         List<String> listItems = new ArrayList<String>();
         for(BluetoothDevice device : mDevices) {
             // device.getName() : 단말기의 블루투스 어댑터 이름을 반환
@@ -390,6 +395,48 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
                 { }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    //Send string "A"
+    public void onButton1Clicked(View view) {
+        try { mOutputStream.write('A'); }
+        catch(Exception e) { }
+    }
+
+    //Send string "B"
+    public void onButton2Clicked(View view) {
+        try { mOutputStream.write('B'); }
+        catch(Exception e) { }
+    }
+
+    //Send string "C"
+    public void onButton3Clicked(View view) {
+        try { mOutputStream.write('C'); }
+        catch(Exception e) { }
+    }
+
+    //Send string "D"
+    public void onButton4Clicked(View view) {
+        try { mOutputStream.write('D'); }
+        catch(Exception e) { }
+    }
+
+    //Send string "E"
+    public void onButton5Clicked(View view) {
+        try { mOutputStream.write('E'); }
+        catch(Exception e) { }
+    }
+
+    //Send string "F"
+    public void onButton6Clicked(View view) {
+        try { mOutputStream.write('F'); }
+        catch(Exception e) { }
+    }
+
+    //Send string "G"
+    public void onButton7Clicked(View view) {
+        try { mOutputStream.write('G'); }
+        catch(Exception e) { }
     }
     // 블루투스
 }

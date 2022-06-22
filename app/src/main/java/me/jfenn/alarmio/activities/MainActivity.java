@@ -72,13 +72,15 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
     //블루투스 사용
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         alarmio = (Alarmio) getApplicationContext();
         alarmio.setListener(this);
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null)
+        {
             BaseFragment fragment = createFragmentFor(getIntent());
             if (fragment == null)
                 return;
@@ -88,7 +90,9 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
                     .commit();
 
             fragmentRef = new WeakReference<>(fragment);
-        } else {
+        }
+        else
+        {
             BaseFragment fragment;
 
             if (fragmentRef == null || (fragment = fragmentRef.get()) == null)
@@ -104,12 +108,14 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         getSupportFragmentManager().addOnBackStackChangedListener(this);
 
         // background permissions info
-        if (Build.VERSION.SDK_INT >= 23 && !PreferenceData.INFO_BACKGROUND_PERMISSIONS.getValue(this, false)) {
+        if (Build.VERSION.SDK_INT >= 23 && !PreferenceData.INFO_BACKGROUND_PERMISSIONS.getValue(this, false))
+        {
             AlertDialog alert = new AlertDialog(this);
             alert.setTitle(getString(R.string.info_background_permissions_title));
             alert.setContent(getString(R.string.info_background_permissions_body));
             alert.setListener((dialog, ok) -> {
-                if (ok) {
+                if (ok)
+                {
                     PreferenceData.INFO_BACKGROUND_PERMISSIONS.setValue(MainActivity.this, true);
                     startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION));
                 }
@@ -120,7 +126,8 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         // 블루투스 사용
         mContext = this;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
+        if (mBluetoothAdapter == null)
+        {
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             return;
         }
@@ -129,9 +136,11 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
     }//onCreate 닫기
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(Intent intent)
+    {
         super.onNewIntent(intent);
-        if(isActionableIntent(intent)) {
+        if(isActionableIntent(intent))
+        {
             FragmentManager manager = getSupportFragmentManager();
             BaseFragment newFragment = createFragmentFor(intent);
             BaseFragment fragment = fragmentRef != null ? fragmentRef.get() : null;
@@ -155,18 +164,21 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
     }
 
     @Nullable
-    private BaseFragment createFragmentFor(Intent intent) {
+    private BaseFragment createFragmentFor(Intent intent)
+    {
         BaseFragment fragment = fragmentRef != null ? fragmentRef.get() : null;
         int fragmentId = intent.getIntExtra(EXTRA_FRAGMENT, -1);
 
-        switch(fragmentId) {
+        switch(fragmentId)
+        {
             case FRAGMENT_STOPWATCH:
                 if(fragment instanceof StopwatchFragment)
                     return fragment;
                 return new StopwatchFragment();
 
             case FRAGMENT_TIMER:
-                if(intent.hasExtra(TimerReceiver.EXTRA_TIMER_ID)) {
+                if(intent.hasExtra(TimerReceiver.EXTRA_TIMER_ID))
+                {
                     int id = intent.getIntExtra(TimerReceiver.EXTRA_TIMER_ID, 0);
                     if(alarmio.getTimers().size() <= id || id < 0) 
                         return fragment;
@@ -190,7 +202,8 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         }
     }
 
-    private boolean isActionableIntent(Intent intent) {
+    private boolean isActionableIntent(Intent intent)
+    {
         return intent.hasExtra(EXTRA_FRAGMENT)
                 || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
                 && (AlarmClock.ACTION_SHOW_ALARMS.equals(intent.getAction())
@@ -201,50 +214,61 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onDestroy()
+    {
         super.onDestroy();
         if(alarmio != null)
             alarmio.setListener(null);
         alarmio = null;
-        try {
+        try
+        {
             mWorkerThread.interrupt();  //데이터 수신 쓰레드 종료
             mInputStream.close();
             mSocket.close();
-        } catch(Exception e) {}
+        }
+        catch(Exception e) {}
         super.onDestroy();
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState)
+    {
         super.onSaveInstanceState(outState != null ? outState : new Bundle()); 
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
         alarmio.stopCurrentSound();
     }
 
     @Override
-    public void onBackStackChanged() {
+    public void onBackStackChanged()
+    {
         BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
         fragmentRef = new WeakReference<>(fragment);
     }
 
     @Override
-    public void requestPermissions(String... permissions) {
+    public void requestPermissions(String... permissions)
+    {
         ActivityCompat.requestPermissions(this, permissions, 0);
     }
 
     @Override
-    public FragmentManager gettFragmentManager() {
+    public FragmentManager gettFragmentManager()
+    {
         return getSupportFragmentManager();
     }
 
     // 블루투스
-    void checkBluetooth() {
+    void checkBluetooth()
+    {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
+        
+        if (mBluetoothAdapter == null)
+        {
             Toast.makeText(getApplicationContext(), "기기가 블루투스를 지원하지 않습니다.", Toast.LENGTH_LONG).show();
             finish();   // 블루투스 미지원 기기일 경우 강제 종료
         }
@@ -253,53 +277,66 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
                 Toast.makeText(getApplicationContext(), "현재 블루투스가 비활성 상태입니다.", Toast.LENGTH_LONG).show();
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE); // REQUEST_ENABLE_BT : 블루투스 활성 상태의 변경 결과를 App 으로 알려줄 때 식별자로 사용(0이상)
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            } else {
+            }
+            else
+            {
                 selectDevice(); // 블루투스를 지원하고 활성 상태일 경우 디바이스 선택
             }
         }
     }
 
-    public void beginListenForData() {
+    public void beginListenForData()
+    {
         final Handler handler = new Handler();
         // 수신 버퍼
         readBuffer = new byte[1024];
         // 버퍼 내 수신 문자 저장 위치
         readBufferPosition = 0;
         // 문자열 수신 쓰레드
-        mWorkerThread = new Thread(new Runnable() {
+        mWorkerThread = new Thread(new Runnable(){
             @Override
-            public void run() {
+            public void run()
+            {
                 // interrupt() 메소드를 이용 스레드를 종료시키는 예제이다.
                 // interrupt() 메소드는 하던 일을 멈추는 메소드이다.
                 // isInterrupted() 메소드를 사용하여 멈추었을 경우 반복문을 나가서 스레드가 종료하게 된다.
-                while(!Thread.currentThread().isInterrupted()) {
-                    try {
+                while(!Thread.currentThread().isInterrupted())
+                {
+                    try
+                    {
                         // InputStream.available() : 다른 스레드에서 blocking 하기 전까지 읽은 수 있는 문자열 개수를 반환
                         // 수신 데이터 확인
                         int byteAvailable = mInputStream.available();
                         // 데이터가 수신된 경우
-                        if(byteAvailable > 0) {
+                        if(byteAvailable > 0)
+                        {
                             byte[] packetBytes = new byte[byteAvailable];
                             // read(buf[]) : 입력스트림에서 buf[] 크기만큼 읽어서 저장 없을 경우에 -1 리턴
                             mInputStream.read(packetBytes);
-                            for(int i=0; i<byteAvailable; i++) {
+                            for(int i=0; i<byteAvailable; i++)
+                            {
                                 byte b = packetBytes[i];
-                                if(b == mCharDelimiter) {
+                                if(b == mCharDelimiter)
+                                {
                                     byte[] encodedBytes = new byte[readBufferPosition];
                                     // System.arraycopy(복사할 배열, 복사시작점, 복사된 배열, 붙이기 시작점, 복사할 개수)
                                     // readBuffer 배열을 처음 부터 끝까지 encodedBytes 배열로 복사
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
                                     final String data = new String(encodedBytes, "US-ASCII");
                                     readBufferPosition = 0;
-                                    handler.post(new Runnable() {
+                                    handler.post(new Runnable()
+                                                 {
                                         // 수신된 문자열 데이터에 대한 처리.
                                         @Override
-                                        public void run() {
+                                        public void run()
+                                        {
                                             // mStrDelimiter = '\n';
                                             mEditReceive.setText(mEditReceive.getText().toString() + data+ mStrDelimiter);
                                         }
                                     });
-                                } else {
+                                }
+                                else
+                                {
                                     readBuffer[readBufferPosition++] = b;
                                 }
                             }
@@ -312,12 +349,15 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         });
     }
 
-    BluetoothDevice getDeviceFromBondedList(String name) {  //BluetoothDevice : 페어링 된 기기 목록을 얻어옴.
+    BluetoothDevice getDeviceFromBondedList(String name)
+    {  //BluetoothDevice : 페어링 된 기기 목록을 얻어옴.
         BluetoothDevice selectedDevice = null;
         //getBondedDevices 함수가 반환하는 페어링 된 기기 목록은 Set 형식이며,
         //Set 형식에서는 n 번째 원소를 얻어오는 방법이 없으므로 주어진 이름과 비교해서 찾는다.
-        for(BluetoothDevice device : mDevices) {    // getName() : 디바이스의 블루투스 어댑터 이름을 반환
-            if(name.equals(device.getName())) {
+        for(BluetoothDevice device : mDevices)
+        {    // getName() : 디바이스의 블루투스 어댑터 이름을 반환
+            if(name.equals(device.getName()))
+            {
                 selectedDevice = device;
                 break;
             }
@@ -325,13 +365,15 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         return selectedDevice;
     }
 
-    public void selectDevice() {
+    public void selectDevice()
+    {
         // 블루투스 디바이스는 연결해서 사용하기 전에 먼저 페어링 되어야만 한다
         // getBondedDevices() : 페어링된 장치 목록 얻어오는 함수
         mDevices = mBluetoothAdapter.getBondedDevices();
         mPairedDeviceCount = mDevices.size();
 
-        if(mPairedDeviceCount == 0 ) {  // 페어링된 장치가 없는 경우
+        if(mPairedDeviceCount == 0 )
+        {  // 페어링된 장치가 없는 경우
             Toast.makeText(getApplicationContext(), "페어링된 장치가 없습니다. 먼저 기기와 페어링을 해주세요.", Toast.LENGTH_LONG).show();
         }
         // 페어링된 장치가 있는 경우
@@ -352,11 +394,14 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         listItems.toArray(new CharSequence[listItems.size()]);
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int item) {
-                if(item == mPairedDeviceCount) {    // 연결할 장치를 선택하지 않고 '취소'를 누른 경우
+            public void onClick(DialogInterface dialog, int item)
+            {
+                if(item == mPairedDeviceCount)
+                {    // 연결할 장치를 선택하지 않고 '취소'를 누른 경우
                     Toast.makeText(getApplicationContext(), "연결할 장치를 선택하지 않았습니다.", Toast.LENGTH_LONG).show();
                 }
-                else {  // 연결할 장치를 선택한 경우, 선택한 장치와 연결을 시도
+                else
+                {  // 연결할 장치를 선택한 경우, 선택한 장치와 연결을 시도
                     connectToSelectedDevice(items[item].toString());
                     deviceName=items[item].toString();
                 }
@@ -367,7 +412,8 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
         alert.show();
     }
 
-    void connectToSelectedDevice(String selectedDeviceName) {   // 블루투스 디바이스의 원격 블루투스 기기를 나타냄
+    void connectToSelectedDevice(String selectedDeviceName)
+    {   // 블루투스 디바이스의 원격 블루투스 기기를 나타냄
         mRemoteDevice = getDeviceFromBondedList(selectedDeviceName);
         UUID uuid = java.util.UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
         try {
@@ -382,59 +428,68 @@ public class MainActivity extends AestheticActivity implements FragmentManager.O
             // 2. 데이터를 받기 위한 InputStream
             mOutputStream = mSocket.getOutputStream();
             mInputStream = mSocket.getInputStream();
-        } catch(Exception e) {  //블루투스 연결 중 오류 발생
+        }
+        catch(Exception e)
+        {  //블루투스 연결 중 오류 발생
             Toast.makeText(getApplicationContext(), "블루투스 연결 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show();
         }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode) {
+        switch(requestCode)
+        {
             case REQUEST_ENABLE_BT:
                 if(resultCode == RESULT_OK) { }   // 블루투스가 활성 상태로 변경됨
-                else if(resultCode == RESULT_CANCELED )
-                { }
+                else if(resultCode == RESULT_CANCELED ) { }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     //Send string "A"
-    public void onButton1Clicked(View view) {
+    public void onButton1Clicked(View view)
+    {
         try { mOutputStream.write('A'); }
         catch(Exception e) { }
     }
 
     //Send string "B"
-    public void onButton2Clicked(View view) {
+    public void onButton2Clicked(View view)
+    {
         try { mOutputStream.write('B'); }
         catch(Exception e) { }
     }
 
     //Send string "C"
-    public void onButton3Clicked(View view) {
+    public void onButton3Clicked(View view)
+    {
         try { mOutputStream.write('C'); }
         catch(Exception e) { }
     }
 
     //Send string "D"
-    public void onButton4Clicked(View view) {
+    public void onButton4Clicked(View view)
+    {
         try { mOutputStream.write('D'); }
         catch(Exception e) { }
     }
 
     //Send string "E"
-    public void onButton5Clicked(View view) {
+    public void onButton5Clicked(View view)
+    {
         try { mOutputStream.write('E'); }
         catch(Exception e) { }
     }
 
     //Send string "F"
-    public void onButton6Clicked(View view) {
+    public void onButton6Clicked(View view)
+    {
         try { mOutputStream.write('F'); }
         catch(Exception e) { }
     }
 
     //Send string "G"
-    public void onButton7Clicked(View view) {
+    public void onButton7Clicked(View view)
+    {
         try { mOutputStream.write('G'); }
         catch(Exception e) { }
     }
